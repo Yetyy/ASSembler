@@ -1,0 +1,162 @@
+;(2*a+b)/c
+.model tiny
+org 100h
+.data
+str1 db 'Enter first number ->','$'
+str2 db 13,10,'Enter second number ->','$'
+str3 db 13,10, 'Enter third number ->','$' 
+str4 db 13,10, 'Result is ->','$'
+a dw ? 
+b dw ?
+c dw ? 
+x dw ?     
+tmp dw ?   
+innum dw ?  
+nstr db 0dh, 0ah,'$'
+.code   
+ pop ax
+ push 20h    
+mov ah,9
+mov dx,offset str1    
+int 21h   
+
+mov ah, 1
+mov dx, 0
+in1:
+ int 21h
+    mov dl, al
+    push dx
+    cmp al, 13
+jne in1        
+
+mov ah, 9
+    mov dx, offset nstr
+    int 21h
+    
+pop ax
+call getnum
+mov ax, innum
+mov a, ax
+      
+      
+ pop ax
+ push 20h    
+mov ah,9
+mov dx,offset str2    
+int 21h   
+
+mov ah, 1
+mov dx, 0
+in2:
+ int 21h
+    mov dl, al
+    push dx
+    cmp al, 13
+jne in2        
+
+mov ah, 9
+    mov dx, offset nstr
+    int 21h
+    
+pop ax
+call getnum
+mov ax, innum
+mov b, ax
+
+
+
+ pop ax
+ push 20h    
+mov ah,9
+mov dx,offset str3    
+int 21h   
+
+mov ah, 1
+mov dx, 0
+in3:
+ int 21h
+    mov dl, al
+    push dx
+    cmp al, 13
+jne in3        
+
+mov ah, 9
+    mov dx, offset nstr
+    int 21h
+    
+pop ax
+call getnum
+mov ax, innum
+mov c, ax
+
+      
+       
+mov ax,[a]     
+mov bx,[b]
+mov cx,[c]   
+add ax, ax
+add ax,bx
+cwd     
+idiv cx 
+mov ah,0
+mov [x],ax         
+
+mov ax, [x]
+mov dx, offset str4 
+
+resout:
+    mov ah, 9
+    int 21h
+    
+    mov ax, [x]
+    mov cx, 0
+    mov bx, 10
+mk3: 
+    cwd
+    div bx
+    add dl, '0'
+    push dx
+    inc cx
+    cmp ax, 0
+    jne mk3
+    mov ah, 2
+ol:
+    pop dx
+    int 21h
+    loop ol 
+int 20h    
+ret 
+
+;getnum----------------------   
+
+getnum:
+    pop ax
+    mov tmp, ax
+    mov ax, 1 
+    pop bx
+    mov innum, 0
+gnl:
+    mov cx, ax
+    sub bx, '0'
+    imul bx
+    mov bx, innum
+    add bx, ax
+    mov innum, bx
+    mov ax, cx
+    mov bx, 10
+    imul bx
+    pop bx
+    cmp bx, '-'
+    je minus
+    cmp bx, 20h
+    jne gnl
+ex:
+    mov ax, tmp
+    push ax
+ret
+minus:
+    mov ax, innum
+    neg ax
+    mov innum, ax
+    pop ax
+    jmp ex

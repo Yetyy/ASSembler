@@ -1,0 +1,25 @@
+.model tiny
+org 100h
+
+.data
+N dw 7
+A dw 1,2,3,4,8,9,10
+c dw 2
+d dw 8
+prod dw 1
+
+.code
+mov si,0
+mov cx,N
+
+M1: mov ax,A[si]
+cmp ax,c
+jl M2
+cmp ax,d
+jg M2
+mul prod 
+mov prod , ax
+M2: add si,2
+loop M1
+
+ret

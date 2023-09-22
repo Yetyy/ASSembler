@@ -1,0 +1,26 @@
+.model tiny
+org 100h
+
+.data
+N dw 7
+A dw 2,3,3,14,9,9,8
+c dw 2
+d dw 8
+prod dw 1
+
+.code
+lea si, A
+mov cx,N
+
+M1: mov ax, word ptr[si]
+
+cmp ax,c
+jl M2
+cmp ax,d
+jg M2
+mul prod 
+mov prod , ax
+M2: lodsw
+loop M1
+
+ret
